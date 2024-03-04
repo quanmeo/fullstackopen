@@ -1,7 +1,9 @@
 import { useState } from 'react'
 
 import Header from './components/Header'
-import PhoneBook from './components/PhoneBook'
+import Persons from './components/Persons'
+import Filter from './components/Filter'
+import PersonForm from './components/PersonForm'
 
 const App = () => {
     const [persons, setPersons] = useState([
@@ -11,65 +13,19 @@ const App = () => {
         { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
     ])
 
-    const [newName, setNewName] = useState('')
-    const [newNumber, setNewNumber] = useState('')
     const [filter, setFilter] = useState('')
-
-    const onChangeName = (event) => {
-        const nameAdding = event.target.value
-        setNewName(nameAdding.trim())
-    }
-    const onChangeNumber = (event) => {
-        const numberAdding = event.target.value
-        setNewNumber(numberAdding.trim())
-    }
-
-    const onChangeFilter = (event) => {
-        const filterValue = event.target.value
-        setFilter(filterValue.trim())
-    }
-
-    const onAdd = (event) => {
-        event.preventDefault()
-        if (newName === '') {
-            alert('name is empty')
-        } else if (newNumber === '') {
-            alert('number is empty')
-        } else if (persons.find(person => person.name === newName) === undefined) {
-            const newPerson = {
-                name: newName,
-                number: newNumber,
-                id: persons.length + 1,
-            }
-            setPersons(persons.concat(newPerson))
-            setNewName('')
-            setNewNumber('')
-        } else {
-            alert(`${newName} is already added to phonebook`)
-        }
-    }
 
     return (
         <div>
-            <Header text='Phonebook' />
-            <div>
-                filter shown with <input onChange={onChangeFilter} value={filter} />
-            </div>
-            <Header text='add a new' />
-            <form onSubmit={onAdd}>
-                <div>
-                    name: <input onChange={onChangeName} value={newName} />
-                </div>
-                <div>
-                    number: <input onChange={onChangeNumber} value={newNumber} />
-                </div>
-                <div>
-                    <button type='submit'>add</button>
-                </div>
-                <div>debug: {newName}</div>
-            </form>
-            <Header text='Numbers' />
-            <PhoneBook persons={(filter === '')
+            <Header text='Phonebook' level='h2'/>
+            <Filter setFilter={setFilter}/>
+            <Header text='add a new' level='h3' />
+            <PersonForm
+                persons={persons}
+                setPersons={setPersons}
+            />
+            <Header text='Numbers' level='h3' />
+            <Persons persons={(filter === '')
                                 ? persons
                                 : persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))} />
         </div>
