@@ -22,20 +22,36 @@ const PersonForm = ({persons, setPersons}) => {
             alert('name is empty')
         } else if (newNumber === '') {
             alert('number is empty')
-        } else if (persons.find(person => person.name === newName) !== undefined) {
-            alert(`${newName} is already added to phonebook`)
         } else {
-            const newPerson = {
-                name: newName,
-                number: newNumber,
+            const person = persons.find(person => person.name === newName)
+            if (person !== undefined) {
+                if (person.number === newNumber) {
+                    alert(`${newName} and ${newNumber} is already added to phonebook`)
+                } else {
+                    if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+                        const newPerson = {...person, number: newNumber}
+                        personService
+                            .update(newPerson.id, newPerson)
+                            .then(updatedPerson => {
+                                setPersons(persons.map(p => p.id === newPerson.id ? newPerson : p))
+                                setNewName('')
+                                setNewNumber('')
+                            })
+                    }
+                }
+            } else {
+                const newPerson = {
+                    name: newName,
+                    number: newNumber
+                }
+                personService
+                    .create(newPerson)
+                    .then(returnedPerson => {
+                        setPersons(persons.concat(returnedPerson))
+                        setNewNumber('')
+                        setNewName('')
+                    })
             }
-            personService
-                .create(newPerson)
-                .then(returnedPerson => {
-                    setPersons(persons.concat(returnedPerson))
-                    setNewName('')
-                    setNewNumber('')
-                })
         }
     }
 
