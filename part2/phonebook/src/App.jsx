@@ -18,6 +18,18 @@ const App = () => {
     }, [])
     const [filter, setFilter] = useState('')
 
+    const deletePersonOf = (id, name) => {
+        if (window.confirm(`Delete ${name} ?`)) {
+            personService
+                .deletePerson(id)
+                .then(returnedPerson => {
+                    setPersons(persons.filter(person => person.id !== returnedPerson.id))
+                })
+        } else {
+            console.log(`Doesn't delete ${name}`)
+        }
+    }
+
     return (
         <div>
             <Header text='Phonebook' level='h2'/>
@@ -30,7 +42,9 @@ const App = () => {
             <Header text='Numbers' level='h3' />
             <Persons persons={(filter === '')
                                 ? persons
-                                : persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))} />
+                                : persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))}
+                     deletePersonOf={deletePersonOf}
+            />
         </div>
     )
 }
